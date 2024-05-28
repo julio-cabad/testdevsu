@@ -10,10 +10,10 @@ type PropsInput = TextInputProps & {
   label: string;
   top: number;
   field: string;
-  handleChange: (field: string, text: string) => void;
   values: { [key: string]: string };
-  setFieldValue: (field: string, value: any) => void;
   errors?: any;
+  onPress: () => void;
+  calendar: boolean;
 };
 
 
@@ -22,35 +22,27 @@ const DateInput = ({
                      top,
                      field,
                      errors,
-                     handleChange,
                      values,
-                     setFieldValue,
+                     onPress,
+                     calendar,
                      ...props
                    }: PropsInput): React.JSX.Element => {
 
-  const [autoCapitalize, setAutoCapitalize]: StateType<string> = useState("none");
-
-
-  const handleChangeText = (text: string) => {
-    handleChange(field, text);
-    setFieldValue(field, text);
-  };
+  ;
 
   return (
     <View style={[tw`w-full`, { marginTop: top }]}>
       <Label text={label} color={blueColor} font={"400"} size={11} left={5} top={0} />
-      <View style={[tw`w-full flex-row border rounded-lg border-slate-400`]}>
-        <TextInput
-          style={[tw`px-2 w-full`,{width: '80%'}]}
-          value={values[field]}
-          editable={false}
-          onChangeText={handleChangeText}
-          autoCapitalize={autoCapitalize as "none" | "sentences" | "words" | "characters" | undefined}
-          {...[props]}
-        />
-        <TouchableOpacity style={[tw`rounded-lg items-end pr-1 justify-center`, {height:48, width: '20%'}]}>
+      <View style={[tw`w-full flex-row border rounded-lg border-slate-400`, { height: 48 }]}>
+        <View style={[tw`px-2 w-full justify-center`, { width: calendar ? "80%" : "100%" }]}>
+          <Label text={values[field]} color={"#333"} font={"400"} size={14} left={0} top={0} />
+        </View>
+        {calendar && <TouchableOpacity onPress={onPress}
+                                       style={[tw`rounded-lg items-end pr-1 justify-center`, {
+                                         height: 48, width: "20%"
+                                       }]}>
           {calendarIcon}
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
       {!!errors[field] !== undefined &&
         <Text style={tw`text-red-500 text-xs ml-2`}>{errors[field]}</Text>}

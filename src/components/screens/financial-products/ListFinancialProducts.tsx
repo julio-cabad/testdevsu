@@ -40,12 +40,14 @@ const ListFinancialProducts: React.FC<ComponentProps> = () => {
       {financialProductsList?.length > 0 && <View style={tw`flex-1 p-6`}>
 
       </View>}
-      {financialProductsList?.length === 0 && <NoData text={"Sin registros"} />}
-      <View style={tw`w-full p-6`}>
-        <SubmitButton bgColor={yellowColor} textColor={blueColor} text={"Agregar"} loading={false} top={0}
-                      onPress={handleAddFinancialProduct} />
-      </View>
-
+      {financialProductsList?.length === 0 &&
+        <View style={tw`flex-1 p-6`}>
+          <NoData text={"Sin registros"} />
+          <SubmitButton bgColor={yellowColor} textColor={blueColor} text={"Agregar"} loading={false} top={0}
+                        onPress={handleAddFinancialProduct} />
+        </View>
+        }
+        
       <Loading isLoading={!financialProductsList} labelText={"Cargando..."} />
     </View>
   );

@@ -14,6 +14,7 @@ class DataStore {
   /*FINANCIAL PRODUCTS LIST*/
   FinancialProductsList = async () => {
     const url = `${BASE_URL}/bp/products`;
+    console.log(url);
     const res = await axios.get(url);
     runInAction(() => this.financialProductsList = res.data?.data);
   };
