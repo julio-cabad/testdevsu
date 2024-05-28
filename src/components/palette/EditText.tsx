@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Text, View, TextInputProps, TextInput } from "react-native";
 import tw from "twrnc";
 import { StateType } from "../utils/Const.tsx";
@@ -29,10 +29,6 @@ const EditText = ({
 
   const [autoCapitalize, setAutoCapitalize]: StateType<string> = useState("none");
 
-  useEffect(() => {
-    field === "email" ? setAutoCapitalize("none") : setAutoCapitalize("sentences");
-  }, [values]);
-
 
   const handleChangeText = (text: string) => {
     handleChange(field, text);
@@ -41,7 +37,7 @@ const EditText = ({
 
   return (
     <View style={[tw`w-full`, { marginTop: top }]}>
-      <Label text={label} color={blueColor} font={'400'} size={11} left={5} top={0}/>
+      <Label text={label} color={blueColor} font={"400"} size={11} left={5} top={0} />
       <TextInput
         style={tw`border rounded-lg px-2 border-slate-400`}
         value={values[field]}
@@ -49,7 +45,7 @@ const EditText = ({
         autoCapitalize={autoCapitalize as "none" | "sentences" | "words" | "characters" | undefined}
         {...[props]}
       />
-      {errors[field] != undefined && values[field] != "" &&
+      {!!errors[field] !== undefined &&
         <Text style={tw`text-red-500 text-xs ml-2`}>{errors[field]}</Text>}
     </View>
   );

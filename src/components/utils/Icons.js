@@ -5,4 +5,5 @@ import { blueColor, } from "./Colors";
 ;
 
 export const headerIcon = <IconMCI name="cash-multiple" size={24} color={blueColor} />;
+export const calendarIcon = <IconMCI name="calendar-month" size={28} color={blueColor} />;
 
