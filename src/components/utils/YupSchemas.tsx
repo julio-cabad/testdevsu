@@ -36,5 +36,5 @@ export const addFinancialProductSchema = Yup.object().shape({
 
   date_release: Yup.string().required("Este campo es requerido"),
 
-  date_revision: Yup.string().required("Este campo es requerido")
+  date_revision: Yup.string()
 });

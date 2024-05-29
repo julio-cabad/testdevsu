@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useContext, useRef, useState } from "react";
 import { Keyboard, View } from "react-native";
 import tw from "twrnc";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
@@ -14,6 +14,12 @@ import { blueColor, grayColor, yellowColor } from "../../utils/Colors.tsx";
 import { StateType } from "../../utils/Const.tsx";
 import { BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import CalendarSheetPicker from "../../palette/CalendarSheetPicker.tsx";
+import { StoreContext } from "../../../stores/Context.tsx";
+import { observer } from "mobx-react-lite";
+import axios from "axios";
+import MobileAlertsMessages from "../../palette/MobileAlertsMessages.tsx";
+import { checkIcon, errorIcon } from "../../utils/Icons";
+import Loading from "../../palette/Loading.tsx";
 
 interface ComponentProps {
 
@@ -21,16 +27,72 @@ interface ComponentProps {
 
 const AddFinancialProduct: React.FC<ComponentProps> = () => {
 
+  const { dataStore } = useContext(StoreContext);
+  // @ts-ignore
+  const { BASE_URL } = dataStore;
+
   const [switchCalendar, setSwitchCalendar]: StateType<boolean> = useState(false);
+  const [isVisible, setIsVisible]: StateType<boolean> = useState(false);
+  const [loading, setIsLoading]: StateType<boolean> = useState(false);
+  const [isOK, setIsOK]: StateType<boolean> = useState(false);
+  const [msjText, setMsjText]: StateType<object> = useState({ head: "AVISO", body: "" });
+  const [icon, setIcon] = useState<JSX.Element | null>(null);
 
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
   const bottomSheetCalendarRef = useRef<BottomSheetModal>(null);
   const handlePresentCalendarPress = useCallback(() => bottomSheetCalendarRef.current?.present(), []);
 
-  const onSubmit = (values: any) => {
+  const handleConfirm = () => {
+    setIsVisible(false);
+    isOK && navigation.navigate("ListFinancialProducts");
+  };
+  const validateId = async (id) => {
+    const url = `${BASE_URL}/bp/products/verification/${id}`;
+    try {
+      const res = await axios.get(url);
+      return res.data;
+    } catch (e) {
+      setIcon(errorIcon);
+      setIsVisible(true);
+      setMsjText({ ...msjText, body: "Ha ocurrido un error, intentelo nuevamente" });
+    }
+  };
+
+  const onSubmit = async (values: any, { resetForm }) => {
+    Keyboard.dismiss();
+    const { id } = values;
+    setIsLoading(true);
+    const validate = await validateId(id);
+    if (validate) {
+      setIsLoading(false);
+      setIcon(errorIcon);
+      setIsVisible(true);
+      setMsjText({ ...msjText, head: "AVISO", body: "Este ID ya ha sido registrado" });
+      return;
+    }
+
+    const url = `${BASE_URL}/bp/products`;
+
+    try {
+      const res = await axios.post(url, values);
+      setIsLoading(false);
+      setIsOK(true);
+      setIcon(checkIcon);
+      await dataStore?.FinancialProductsList();
+      setIsVisible(true);
+      setMsjText({ ...msjText, head: "PODUCTO AGREGADO", body: "Producto agregado exitosamente" });
+      resetForm();
+    } catch (e) {
+      setIsLoading(false);
+      setIcon(errorIcon);
+      setIsVisible(true);
+      setMsjText({ ...msjText, head: "AVISO", body: "Ha ocurrido un error, intentelo nuevamente" });
+    }
+
     console.log(values);
   };
+
 
   return (
     <BottomSheetModalProvider>
@@ -49,8 +111,6 @@ const AddFinancialProduct: React.FC<ComponentProps> = () => {
               validationSchema={addFinancialProductSchema}
               initialValues={initialFinancialProductsValues}
               onSubmit={onSubmit}
-
-
             >
               {({
                   handleChange,
@@ -61,23 +121,20 @@ const AddFinancialProduct: React.FC<ComponentProps> = () => {
                   resetForm
                 }) => {
 
-                console.log(errors);
-                console.log(values);
-
                 return (
                   <View style={tw`flex-1`}>
                     <EditText label={"ID"} top={0} field={"id"} handleChange={handleChange} values={values}
-                              setFieldValue={setFieldValue} errors={errors} maxLength={10} />
+                              setFieldValue={setFieldValue} errors={errors} max={10} />
 
                     <EditText label={"Nombre"} top={0} field={"name"} handleChange={handleChange} values={values}
-                              setFieldValue={setFieldValue} errors={errors} maxLength={100} />
+                              setFieldValue={setFieldValue} errors={errors} max={100} />
 
                     <EditText label={"Descripción"} top={0} field={"description"} handleChange={handleChange}
-                              values={values} setFieldValue={setFieldValue} errors={errors} maxLength={100} multiline
+                              values={values} setFieldValue={setFieldValue} errors={errors} max={200} multiline
                               numberOfLines={40} />
 
                     <EditText label={"Logo"} top={0} field={"logo"} handleChange={handleChange}
-                              values={values} setFieldValue={setFieldValue} errors={errors} maxLength={100} />
+                              values={values} setFieldValue={setFieldValue} errors={errors} max={2000} />
 
                     <DateInput label={"Fecha de liberación"} top={0} field={"date_release"} calendar={true}
                                values={values} errors={errors} onPress={handlePresentCalendarPress} />
@@ -103,13 +160,15 @@ const AddFinancialProduct: React.FC<ComponentProps> = () => {
                   </View>
                 );
               }}</Formik>
-
           </KeyboardAwareScrollView>
         </View>
+        <MobileAlertsMessages isVisible={isVisible} body={msjText.body} head={msjText.head} textButton={"CONFIRMAR"}
+                              icon={icon} handleOnPress={handleConfirm} />
+        <Loading isLoading={loading} labelText={""} />
       </View>
     </BottomSheetModalProvider>
   );
 };
 
 
-export default AddFinancialProduct;
+export default observer(AddFinancialProduct);

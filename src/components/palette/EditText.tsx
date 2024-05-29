@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { Text, View, TextInputProps, TextInput } from "react-native";
 import tw from "twrnc";
-import { StateType } from "../utils/Const.tsx";
 import Label from "./Label.tsx";
 import { blueColor } from "../utils/Colors.tsx";
 
 type PropsInput = TextInputProps & {
   label: string;
   top: number;
+  max: number;
   field: string;
   handleChange: (field: string, text: string) => void;
   values: { [key: string]: string };
@@ -24,16 +24,15 @@ const EditText = ({
                     handleChange,
                     values,
                     setFieldValue,
+                    max,
                     ...props
                   }: PropsInput): React.JSX.Element => {
-
-  const [autoCapitalize, setAutoCapitalize]: StateType<string> = useState("none");
-
 
   const handleChangeText = (text: string) => {
     handleChange(field, text);
     setFieldValue(field, text);
   };
+
 
   return (
     <View style={[tw`w-full`, { marginTop: top }]}>
@@ -41,8 +40,8 @@ const EditText = ({
       <TextInput
         style={tw`border rounded-lg px-2 border-slate-400`}
         value={values[field]}
+        maxLength={max}
         onChangeText={handleChangeText}
-        autoCapitalize={autoCapitalize as "none" | "sentences" | "words" | "characters" | undefined}
         {...[props]}
       />
       {!!errors[field] !== undefined &&

@@ -2,6 +2,7 @@ import React from "react";
 import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/stack";
 import ListFinancialProducts from "../screens/financial-products/ListFinancialProducts.tsx";
 import AddFinancialProduct from "../screens/financial-products/AddFinancialProduct.tsx";
+import DetailFinancialProducts from "../screens/financial-products/DetailFinancialProducts.tsx";
 
 
 interface ComponentProps {
@@ -23,8 +24,9 @@ const Routes: React.FC<ComponentProps> = () => {
         gestureEnabled: false,
         headerMode: "float"
       }}>
-      <Stack.Screen name="Login" component={ListFinancialProducts} />
+      <Stack.Screen name="ListFinancialProducts" component={ListFinancialProducts} />
       <Stack.Screen name="AddFinancialProduct" component={AddFinancialProduct} />
+      <Stack.Screen name="DetailFinancialProducts" component={DetailFinancialProducts} />
     </Stack.Navigator>
   );
 };

@@ -30,16 +30,16 @@ const MobileAlertsMessages: React.FC<ComponentProps> = ({ isVisible, head, handl
           </View>
 
           <View style={tw`w-full  items-center  mt-3 px-6`}>
-            <Label text={head} color={"black"} font={"800"} size={16} left={0} top={0} />
+            <Label text={head} color={"black"} font={"700"} size={22} left={0} top={0} />
           </View>
 
           <View style={tw`w-full  items-center  mt-3 px-6`}>
-            <Label text={body} color={"#333"} font={"400"} size={16} left={0} top={0} />
+            <Label text={body} color={"#333"} font={"400"} size={14} left={0} top={0} />
           </View>
 
           <TouchableOpacity style={tw`p-4 mt-3 border-t w-full justify-center items-center border-slate-300`}
                             onPress={handleOnPress}>
-            <Label text={textButton} color={blueColor} font={"700"} size={16} left={0} top={0} />
+            <Label text={textButton} color={blueColor} font={"400"} size={16} left={0} top={0} />
           </TouchableOpacity>
         </View>
       </View>

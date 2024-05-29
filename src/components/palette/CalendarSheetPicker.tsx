@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import {  View } from "react-native";
+import { View } from "react-native";
 import tw from "twrnc";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -25,12 +25,11 @@ const CalendarSheetPicker: React.FC<ComponentProps> = ({ bottomSheetModalRef, se
   const minDate = new Date();
 
   const onDateChange = (date: any) => {
-    const date_revision_ = add(new Date(date), { years: 1 });
-    const dateRelease = format(date, "dd-MM-yyyy");
-    const date_revision = format(date_revision_, "dd-MM-yyyy");
+    const dateRevision_ = add(new Date(date), { years: 1 });
+    const dateRelease = format(date, "yyy-MM-dd");
+    const dateRevision = format(dateRevision_, "yyyy-MM-dd");
 
-    setFieldValue("date_release", dateRelease);
-    setFieldValue("date_revision", date_revision);
+    setFieldValue("date_revision", dateRevision);
     setFieldValue("date_release", dateRelease);
     // @ts-ignore
     bottomSheetModalRef.current.close();
