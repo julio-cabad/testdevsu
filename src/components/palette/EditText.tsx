@@ -13,6 +13,7 @@ type PropsInput = TextInputProps & {
   values: { [key: string]: string };
   setFieldValue: (field: string, value: any) => void;
   errors?: any;
+  editable: boolean
 };
 
 
@@ -25,6 +26,7 @@ const EditText = ({
                     values,
                     setFieldValue,
                     max,
+                    editable,
                     ...props
                   }: PropsInput): React.JSX.Element => {
 
@@ -41,6 +43,7 @@ const EditText = ({
         style={tw`border rounded-lg px-2 border-slate-400`}
         value={values[field]}
         maxLength={max}
+        editable={editable}
         onChangeText={handleChangeText}
         {...[props]}
       />

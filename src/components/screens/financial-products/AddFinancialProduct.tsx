@@ -31,7 +31,6 @@ const AddFinancialProduct: React.FC<ComponentProps> = () => {
   // @ts-ignore
   const { BASE_URL } = dataStore;
 
-  const [switchCalendar, setSwitchCalendar]: StateType<boolean> = useState(false);
   const [isVisible, setIsVisible]: StateType<boolean> = useState(false);
   const [loading, setIsLoading]: StateType<boolean> = useState(false);
   const [isOK, setIsOK]: StateType<boolean> = useState(false);
@@ -53,6 +52,7 @@ const AddFinancialProduct: React.FC<ComponentProps> = () => {
       const res = await axios.get(url);
       return res.data;
     } catch (e) {
+      console.log(e)
       setIcon(errorIcon);
       setIsVisible(true);
       setMsjText({ ...msjText, body: "Ha ocurrido un error, intentelo nuevamente" });
@@ -64,6 +64,7 @@ const AddFinancialProduct: React.FC<ComponentProps> = () => {
     const { id } = values;
     setIsLoading(true);
     const validate = await validateId(id);
+    console.log(validate)
     if (validate) {
       setIsLoading(false);
       setIcon(errorIcon);
@@ -75,7 +76,7 @@ const AddFinancialProduct: React.FC<ComponentProps> = () => {
     const url = `${BASE_URL}/bp/products`;
 
     try {
-      const res = await axios.post(url, values);
+      await axios.post(url, values);
       setIsLoading(false);
       setIsOK(true);
       setIcon(checkIcon);
@@ -89,8 +90,6 @@ const AddFinancialProduct: React.FC<ComponentProps> = () => {
       setIsVisible(true);
       setMsjText({ ...msjText, head: "AVISO", body: "Ha ocurrido un error, intentelo nuevamente" });
     }
-
-    console.log(values);
   };
 
 
@@ -124,10 +123,10 @@ const AddFinancialProduct: React.FC<ComponentProps> = () => {
                 return (
                   <View style={tw`flex-1`}>
                     <EditText label={"ID"} top={0} field={"id"} handleChange={handleChange} values={values}
-                              setFieldValue={setFieldValue} errors={errors} max={10} />
+                              setFieldValue={setFieldValue} errors={errors} max={10} editable={true}/>
 
                     <EditText label={"Nombre"} top={0} field={"name"} handleChange={handleChange} values={values}
-                              setFieldValue={setFieldValue} errors={errors} max={100} />
+                              setFieldValue={setFieldValue} errors={errors} max={100} editable={true}/>
 
                     <EditText label={"Descripción"} top={0} field={"description"} handleChange={handleChange}
                               values={values} setFieldValue={setFieldValue} errors={errors} max={200} multiline
@@ -154,7 +153,7 @@ const AddFinancialProduct: React.FC<ComponentProps> = () => {
                                   }}
                     />
 
-                    <CalendarSheetPicker bottomSheetModalRef={bottomSheetCalendarRef} setSwitch={setSwitchCalendar}
+                    <CalendarSheetPicker bottomSheetModalRef={bottomSheetCalendarRef}
                                          setFieldValue={setFieldValue} />
 
                   </View>

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
 import tw from "twrnc";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
@@ -11,6 +11,7 @@ import NoData from "../../palette/NoData.tsx";
 import SubmitButton from "../../palette/SubmitButton.tsx";
 import { blueColor, yellowColor } from "../../utils/Colors.tsx";
 import { arrowIcon } from "../../utils/Icons";
+import { StateType } from "../../utils/Const.tsx";
 
 interface ComponentProps {
 
@@ -23,6 +24,14 @@ const ListFinancialProducts: React.FC<ComponentProps> = () => {
   // @ts-ignore
   const { financialProductsList } = dataStore;
 
+  const [search, setSearch]: StateType<string> = useState("");
+  const [data, setData]: StateType<any> = useState(financialProductsList);
+
+  useEffect(() => {
+    setData(financialProductsList);
+  }, [financialProductsList]);
+
+
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
   useEffect(() => {
@@ -32,6 +41,18 @@ const ListFinancialProducts: React.FC<ComponentProps> = () => {
       console.log(e);
     }
   }, []);
+
+  const handleSearch = (text) => {
+    setSearch(text);
+    console.log(text);
+    const newData = financialProductsList.filter(item => {
+      const itemData = `${item.name.toUpperCase()} ${item.id}`;
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    setData(newData);
+    text === "" && setData(financialProductsList);
+  };
 
   const handleAddFinancialProduct = () => navigation.navigate("AddFinancialProduct");
   const handleDetailFinancialProducts = (detail) => {
@@ -64,10 +85,12 @@ const ListFinancialProducts: React.FC<ComponentProps> = () => {
       <Header />
       {financialProductsList?.length > 0 &&
         <View style={tw`flex-1 p-6`}>
-          <TextInput style={[tw`border rounded-lg px-2 border-slate-400 w-full`]} placeholder={"Buscar"} />
+          <TextInput style={[tw`border rounded-lg px-2 border-slate-400 w-full`]} placeholder={"Buscar"}
+                     value={search} onChangeText={(text) => handleSearch(text)}
+          />
           <View style={tw`border border-slate-200 rounded-xl mt-5`}>
             <FlatList
-              data={financialProductsList}
+              data={data}
               renderItem={renderItem}
               keyExtractor={(item) => item.id}
               initialNumToRender={10}

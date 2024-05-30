@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import tw from "twrnc";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -10,21 +10,19 @@ import { add, format } from "date-fns";
 
 interface ComponentProps {
   bottomSheetModalRef: React.RefObject<BottomSheetModalMethods>;
-  setSwitch: React.Dispatch<React.SetStateAction<boolean>>;
   setFieldValue: (field: string, value: any) => void;
 }
 
-const CalendarSheetPicker: React.FC<ComponentProps> = ({ bottomSheetModalRef, setSwitch, setFieldValue }) => {
-
-  // const [selectedDate, selectedDate] = useState(null)
+const CalendarSheetPicker: React.FC<ComponentProps> = ({ bottomSheetModalRef, setFieldValue }) => {
 
   const snapPoints = useMemo(() => ["85%", "86%"], []);
-
-  const handleSheetChanges = useCallback((index: number) => index === -1 && setSwitch(false), []);
+  // @ts-ignore
+  const handleSheetChanges = useCallback((index: number) => index === -1 && bottomSheetModalRef.current.close(), []);
 
   const minDate = new Date();
 
   const onDateChange = (date: any) => {
+    Keyboard.dismiss();
     const dateRevision_ = add(new Date(date), { years: 1 });
     const dateRelease = format(date, "yyy-MM-dd");
     const dateRevision = format(dateRevision_, "yyyy-MM-dd");
